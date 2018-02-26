@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import moment from 'moment';
 import React, { Component } from 'react';
 import InputSlider from 'react-input-slider';
 
@@ -6,18 +7,28 @@ export default class extends Component {
   changeHours = pos => {
     const m = this.props.moment;
     m.hours(pos.x);
-    this.props.onChange(m);
+    this.props.onChange(m, this.calculateEndTime(this.props.length));
   };
 
   changeMinutes = pos => {
     const m = this.props.moment;
     m.minutes(pos.x);
-    this.props.onChange(m);
+    this.props.onChange(m, this.calculateEndTime(this.props.length));
   };
+
+  changeLength = pos => {
+    this.props.onChange(this.props.moment, this.calculateEndTime(pos.x));
+  }
+
+  calculateEndTime (length) {
+    const m = moment(this.props.moment);
+    m.add(length, 'm');
+    return m;
+  }
 
   render() {
     const m = this.props.moment;
-
+    
     return (
       <div className={cx('m-time', this.props.className)}>
         <div className="showtime">
@@ -44,6 +55,15 @@ export default class extends Component {
             xstep={this.props.minStep}
             x={m.minute()}
             onChange={this.changeMinutes}
+          />
+          <div className="time-text">Length : {this.props.length} minutes</div>
+          <InputSlider
+            className="u-slider-time"
+            xmin={0}
+            xmax={360}
+            x={this.props.length}
+            xstep={1}
+            onChange={this.changeLength} />
           />
         </div>
       </div>
